@@ -1,34 +1,41 @@
 package fr.epf.restaurant.model;
 
 public class LigneCommandeClient {
-    private long id;
-    private long commandeClientId;
-    private long platId;
+    private Long id;
+    private Long commandeClientId;
+    private Long platId;
     private int quantite;
+
+
+    
     public LigneCommandeClient() {
     }
-    public LigneCommandeClient(long id, long commandeClientId, long platId, int quantite) {
+
+    
+    public LigneCommandeClient(Long id, Long commandeClientId, Long platId, int quantite) {
         this.id = id;
         this.commandeClientId = commandeClientId;
         this.platId = platId;
         this.quantite = quantite;
     }
-    public long getId() {
+
+
+    public Long getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public long getCommandeClientId() {
+    public Long getCommandeClientId() {
         return commandeClientId;
     }
-    public void setCommandeClientId(long commandeClientId) {
+    public void setCommandeClientId(Long commandeClientId) {
         this.commandeClientId = commandeClientId;
     }
-    public long getPlatId() {
+    public Long getPlatId() {
         return platId;
     }
-    public void setPlatId(long platId) {
+    public void setPlatId(Long platId) {
         this.platId = platId;
     }
     public int getQuantite() {
@@ -37,6 +44,8 @@ public class LigneCommandeClient {
     public void setQuantite(int quantite) {
         this.quantite = quantite;
     }
+    
+    
     
 
 }

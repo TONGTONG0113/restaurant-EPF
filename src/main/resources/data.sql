@@ -76,3 +76,6 @@ INSERT INTO FOURNISSEUR_INGREDIENT (fournisseur_id, ingredient_id, prix_unitaire
     (2, 5, 0.31),   -- Transgourmet: Gruyere          0.31 €/g
     (2, 6, 0.09),   -- Transgourmet: Beurre           0.09 €/g
     (2, 7, 0.04);   -- Transgourmet: Pommes de terre  0.04 €/g
+
+
+

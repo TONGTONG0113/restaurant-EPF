@@ -1,30 +1,40 @@
 package fr.epf.restaurant.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.epf.restaurant.model.Client;
-import fr.epf.restaurant.service.ClientService;
+import fr.epf.restaurant.dao.ClientDao;
+
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
-    public final ClientService clientservice;
-    public ClientController(ClientService clientservice) {
-        this.clientservice = clientservice;
+    private final ClientDao clientDao;
+ 
+    public ClientController(ClientDao clientDao) {
+        this.clientDao = clientDao;
     }
+ 
     @GetMapping
-    public List<Client> getAllClients() {
-        return clientservice.findAllClients();
+    public List<Map<String, Object>> getAll() {
+        return clientDao.findAll();
     }
-
+ 
     @PostMapping
-    public void saveClient(@RequestBody Client client) {
-        clientservice.saveClient(client);
+    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> body) {
+        String nom       = (String) body.get("nom");
+        String prenom    = (String) body.get("prenom");
+        String email     = (String) body.getOrDefault("email", "");
+        String telephone = (String) body.getOrDefault("telephone", "");
+        Map<String, Object> client = clientDao.create(nom, prenom, email, telephone);
+        return ResponseEntity.status(201).body(client);
     }
+    
 
 }

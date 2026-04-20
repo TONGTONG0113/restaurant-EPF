@@ -1,7 +1,9 @@
 package fr.epf.restaurant.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,31 +11,53 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.epf.restaurant.dto.PlatDto;
-import fr.epf.restaurant.model.Plat;
-import fr.epf.restaurant.service.PlatService;
+import fr.epf.restaurant.dao.PlatDao;
+import fr.epf.restaurant.exception.ResourceNotFoundException;
+
+
+
 
 @RestController
 @RequestMapping("/api/plats")
 public class PlatController {
-    private final PlatService platService;
-    public PlatController(PlatService platService){
-        this.platService=platService;
-
+     private final PlatDao platDao;
+ 
+    public PlatController(PlatDao platDao) {
+        this.platDao = platDao;
     }
+ 
     @GetMapping
-    public List<Plat> getAllPlats(){
-        return platService.getAllPlats();
+    public List<Map<String, Object>> getAll() {
+        return platDao.findAll();
     }
-
+ 
     @GetMapping("/{id}")
-    public PlatDto getByIdPlat(@PathVariable long id){
-        return platService.getById(id);
+    public Map<String, Object> getById(@PathVariable Long id) {
+        return platDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Plat", id));
     }
-
+ 
     @PostMapping
-    public void creatPlat(@RequestBody Plat plat){
-        platService.creatPlat(plat);
+    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> body) {
+        String nom         = (String) body.get("nom");
+        String description = (String) body.getOrDefault("description", "");
+        double prix        = ((Number) body.get("prix")).doubleValue();
+ 
+        Map<String, Object> plat = platDao.create(nom, description, prix);
+        Long platId = (Long) plat.get("id");
+ 
+        if (body.containsKey("ingredients")) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> ings = (List<Map<String, Object>>) body.get("ingredients");
+            for (Map<String, Object> ing : ings) {
+                Long   ingredientId = ((Number) ing.get("ingredientId")).longValue();
+                double quantite     = ((Number) ing.get("quantite")).doubleValue();
+                platDao.addIngredient(platId, ingredientId, quantite);
+            }
+            plat = platDao.findById(platId).orElseThrow();
+        }
+ 
+        return ResponseEntity.status(201).body(plat);
     }
 
 }

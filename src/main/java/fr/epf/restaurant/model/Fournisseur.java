@@ -1,7 +1,7 @@
 package fr.epf.restaurant.model;
 
 public class Fournisseur {
-    private long id;
+    private Long id;
     private String nom;
     private String contact;
     private String email;
@@ -9,18 +9,22 @@ public class Fournisseur {
     public Fournisseur() {
     }
 
-    public Fournisseur(long id, String nom, String contact, String email) {
+    
+
+    public Fournisseur(Long id, String nom, String contact, String email) {
         this.id = id;
         this.nom = nom;
         this.contact = contact;
         this.email = email;
     }
 
-    public long getId() {
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,6 +52,7 @@ public class Fournisseur {
         this.email = email;
     }
 
+    
     
 
     

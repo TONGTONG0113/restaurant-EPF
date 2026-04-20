@@ -1,24 +1,30 @@
 package fr.epf.restaurant.model;
 
 public class Ingredient {
-    private long id;
+    private Long id;
     private String nom;
     private String unite;
     private double stockActuel;
     private double seuilAlerte;
+
+    
     public Ingredient() {
     }
-    public Ingredient(long id, String nom, String unite, double stockActuel, double seuilAlerte) {
+
+    
+    public Ingredient(Long id, String nom, String unite, double stockActuel, double seuilAlerte) {
         this.id = id;
         this.nom = nom;
         this.unite = unite;
         this.stockActuel = stockActuel;
         this.seuilAlerte = seuilAlerte;
     }
-    public long getId() {
+
+
+    public Long getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getNom() {
@@ -45,6 +51,7 @@ public class Ingredient {
     public void setSeuilAlerte(double seuilAlerte) {
         this.seuilAlerte = seuilAlerte;
     }
+    
     
 
 }

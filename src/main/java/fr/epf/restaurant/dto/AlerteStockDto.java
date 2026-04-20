@@ -1,17 +1,24 @@
 package fr.epf.restaurant.dto;
 
-public class RecommandationsDto {
+public class AlerteStockDto {
     private Long ingredientId;
     private String ingredientNom;
     private String unite;
     private int stockActuel;
     private int seuilAlerte;
-    private Long fournisseurId;
-    private String fournisseurNom;
-    private double prixUnitaire;
-    private int quantiteRecommandee;
+    private int quantiteACommander;
  
-    public RecommandationsDto() {}
+    public AlerteStockDto() {}
+ 
+    public AlerteStockDto(Long ingredientId, String ingredientNom, String unite,
+                          int stockActuel, int seuilAlerte, int quantiteACommander) {
+        this.ingredientId = ingredientId;
+        this.ingredientNom = ingredientNom;
+        this.unite = unite;
+        this.stockActuel = stockActuel;
+        this.seuilAlerte = seuilAlerte;
+        this.quantiteACommander = quantiteACommander;
+    }
  
     public Long getIngredientId() { return ingredientId; }
     public void setIngredientId(Long ingredientId) { this.ingredientId = ingredientId; }
@@ -28,23 +35,8 @@ public class RecommandationsDto {
     public int getSeuilAlerte() { return seuilAlerte; }
     public void setSeuilAlerte(int seuilAlerte) { this.seuilAlerte = seuilAlerte; }
  
-    public Long getFournisseurId() { return fournisseurId; }
-    public void setFournisseurId(Long fournisseurId) { this.fournisseurId = fournisseurId; }
- 
-    public String getFournisseurNom() { return fournisseurNom; }
-    public void setFournisseurNom(String fournisseurNom) { this.fournisseurNom = fournisseurNom; }
- 
-    public double getPrixUnitaire() { return prixUnitaire; }
-    public void setPrixUnitaire(double prixUnitaire) { this.prixUnitaire = prixUnitaire; }
- 
-    public int getQuantiteRecommandee() { return quantiteRecommandee; }
-    public void setQuantiteRecommandee(int quantiteRecommandee) { this.quantiteRecommandee = quantiteRecommandee; }
-
-    
-
-    
-    
-
+    public int getQuantiteACommander() { return quantiteACommander; }
+    public void setQuantiteACommander(int quantiteACommander) { this.quantiteACommander = quantiteACommander; }
     
 
 }

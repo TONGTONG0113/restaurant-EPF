@@ -1,26 +1,26 @@
 package fr.epf.restaurant.model;
 
 public class PlatIngredient {
-    private long platId;
-    private long ingrediantId;
+    private Long platId;
+    private Long ingrediantId;
     private double quantiteRequise;
     public PlatIngredient() {
     }
-    public PlatIngredient(long platId, long ingrediantId, double quantiteRequise) {
+    public PlatIngredient(Long platId, Long ingrediantId, double quantiteRequise) {
         this.platId = platId;
         this.ingrediantId = ingrediantId;
         this.quantiteRequise = quantiteRequise;
     }
-    public long getPlatId() {
+    public Long getPlatId() {
         return platId;
     }
-    public void setPlatId(long platId) {
+    public void setPlatId(Long platId) {
         this.platId = platId;
     }
-    public long getIngrediantId() {
+    public Long getIngrediantId() {
         return ingrediantId;
     }
-    public void setIngrediantId(long ingrediantId) {
+    public void setIngrediantId(Long ingrediantId) {
         this.ingrediantId = ingrediantId;
     }
     public double getQuantiteRequise() {
@@ -29,7 +29,7 @@ public class PlatIngredient {
     public void setQuantiteRequise(double quantiteRequise) {
         this.quantiteRequise = quantiteRequise;
     }
-
+    
         
 
 }

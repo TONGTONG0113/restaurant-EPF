@@ -3,28 +3,29 @@ package fr.epf.restaurant.model;
 import java.time.LocalDate;
 
 public class CommandeFournisseur {
-    private long id;
-    private long fournisseurId;
+    private Long id;
+    private Long fournisseurId;
     private LocalDate dateCommande;
     private String statut;
     public CommandeFournisseur() {
     }
-    public CommandeFournisseur(long id, long fournisseurId, LocalDate dateCommande, String statut) {
+
+    public CommandeFournisseur(Long id, Long fournisseurId, LocalDate dateCommande, String statut) {
         this.id = id;
         this.fournisseurId = fournisseurId;
         this.dateCommande = dateCommande;
         this.statut = statut;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public long getFournisseurId() {
+    public Long getFournisseurId() {
         return fournisseurId;
     }
-    public void setFournisseurId(long fournisseurId) {
+    public void setFournisseurId(Long fournisseurId) {
         this.fournisseurId = fournisseurId;
     }
     public LocalDate getDateCommande() {
@@ -39,6 +40,7 @@ public class CommandeFournisseur {
     public void setStatut(String statut) {
         this.statut = statut;
     }
+    
     
 
 }

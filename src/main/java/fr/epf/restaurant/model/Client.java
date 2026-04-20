@@ -1,7 +1,7 @@
 package fr.epf.restaurant.model;
 
 public class Client {
-    private long id;
+    private Long id;
     private String nom;
     private String prenom;
     private String email;
@@ -10,7 +10,9 @@ public class Client {
     public Client() {
     }
 
-    public Client(long id, String nom, String prenom, String email, String telephone) {
+    
+
+    public Client(Long id, String nom, String prenom, String email, String telephone) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -18,11 +20,13 @@ public class Client {
         this.telephone = telephone;
     }
 
-    public long getId() {
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,6 +62,7 @@ public class Client {
         this.telephone = telephone;
     }
 
+    
     
 
 }

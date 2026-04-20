@@ -1,62 +1,78 @@
 package fr.epf.restaurant.dao;
 
-import java.util.List;
-
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import fr.epf.restaurant.dto.FournisseurDto;
-import fr.epf.restaurant.model.Fournisseur;
-
-
+ 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.*;
+ 
 @Repository
 public class FournisseurDao {
-    private final JdbcTemplate jdbcTemplate;
-
-    public FournisseurDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-
+ 
+     private final JdbcTemplate jdbc;
+ 
+    public FournisseurDao(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
-
-    public List<Fournisseur> findAll(){
-        String sql = "SELECT * FROM FOURNISSEUR";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-
-            Fournisseur fournisseur =new Fournisseur();
-
-            fournisseur.setId(rs.getLong("id"));
-            fournisseur.setNom(rs.getString("nom"));
-            fournisseur.setContact(rs.getString("contact"));
-            fournisseur.setEmail(rs.getString("email"));
-
-            
-            return fournisseur;
-        });  
+ 
+    public List<Map<String, Object>> findAll() {
+        return jdbc.query(
+                "SELECT id, nom, contact, email FROM FOURNISSEUR ORDER BY id",
+                (rs, i) -> toMap(rs));
     }
-
-    public List<FournisseurDto> findPrixById(long id){
-        String sql= """
-        SELECT FOURNISSEUR.id, FOURNISSEUR.nom, FOURNISSEUR_INGREDIENT.prix_unitaire,
-        INGREDIENT.nom, FOURNISSEUR_INGREDIENT.ingredient_id, INGREDIENT.unite
-        FROM FOURNISSEUR_INGREDIENT
-        JOIN FOURNISSEUR ON FOURNISSEUR.id=FOURNISSEUR_INGREDIENT.fournisseur_id
-        JOIN INGREDIENT ON INGREDIENT.id=FOURNISSEUR_INGREDIENT.ingredient_id
-        WHERE FOURNISSEUR_INGREDIENT.fournisseur_id=?
+ 
+    public Optional<Map<String, Object>> findById(Long id) {
+        List<Map<String, Object>> rows = jdbc.query(
+                "SELECT id, nom, contact, email FROM FOURNISSEUR WHERE id = ?",
+                (rs, i) -> toMap(rs), id);
+        return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
+    }
+ 
+    /** [{ ingredientId, ingredientNom, ingredientUnite, prixUnitaire }] */
+    public List<Map<String, Object>> findCatalogue(Long fournisseurId) {
+        String sql = """
+                SELECT fi.ingredient_id AS ingredientId,
+                       i.nom            AS ingredientNom,
+                       i.unite          AS ingredientUnite,
+                       fi.prix_unitaire AS prixUnitaire
+                FROM FOURNISSEUR_INGREDIENT fi
+                JOIN INGREDIENT i ON fi.ingredient_id = i.id
+                WHERE fi.fournisseur_id = ?
+                ORDER BY i.nom
                 """;
-
-        return jdbcTemplate.query(sql, (rs,rowNum)-> new FournisseurDto(
-            rs.getLong("id"),
-            rs.getString("nom"),
-            rs.getDouble("prix_unitaire"),
-            rs.getString("nom"),
-            rs.getLong("ingredient_id"),
-            rs.getString("unite")
-        ),
-        id);
+        return jdbc.query(sql, (rs, i) -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("ingredientId",    rs.getLong("ingredientId"));
+            m.put("ingredientNom",   rs.getString("ingredientNom"));
+            m.put("ingredientUnite", rs.getString("ingredientUnite"));
+            m.put("prixUnitaire",    rs.getDouble("prixUnitaire"));
+            return m;
+        }, fournisseurId);
     }
-
-
-
-
+ 
+    public Map<String, Object> create(String nom, String contact, String email) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO FOURNISSEUR (nom, contact, email) VALUES (?, ?, ?)",
+                    new String[]{"id"});
+            ps.setString(1, nom);
+            ps.setString(2, contact != null ? contact : "");
+            ps.setString(3, email != null ? email : "");
+            return ps;
+        }, keyHolder);
+        return findById(keyHolder.getKey().longValue()).orElseThrow();
+    }
+ 
+    private Map<String, Object> toMap(java.sql.ResultSet rs) throws java.sql.SQLException {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id",      rs.getLong("id"));
+        m.put("nom",     rs.getString("nom"));
+        m.put("contact", rs.getString("contact"));
+        m.put("email",   rs.getString("email"));
+        return m;
+    }
 }

@@ -1,43 +1,74 @@
 package fr.epf.restaurant.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.epf.restaurant.dto.IngredientDto;
+import fr.epf.restaurant.dao.IngredientDao;
+import fr.epf.restaurant.dto.AlerteStockDto;
 import fr.epf.restaurant.dto.RecommandationsDto;
-import fr.epf.restaurant.model.Ingredient;
-import fr.epf.restaurant.service.IngredientService;
+import fr.epf.restaurant.exception.ResourceNotFoundException;
+import fr.epf.restaurant.service.StockService;
 @RestController
 @RequestMapping("/api/ingredients")
 public class IngredientController {
-    private final IngredientService ingredientService;
-
-    public IngredientController(IngredientService ingredientService) {
-        this.ingredientService = ingredientService;
+    private final IngredientDao ingredientDao;
+    private final StockService  stockService;
+ 
+    public IngredientController(IngredientDao ingredientDao, StockService stockService) {
+        this.ingredientDao = ingredientDao;
+        this.stockService  = stockService;
     }
-
+ 
     @GetMapping
-    public List<Ingredient> getAll(){
-        return ingredientService.getAll();
+    public List<Map<String, Object>> getAll() {
+        return ingredientDao.findAll();
     }
-
+ 
     @GetMapping("/alertes")
-    public List<Ingredient> getByAlerte(){
-        return ingredientService.getByAlerte();
+    public List<AlerteStockDto> getAlertes() {
+        return stockService.getAlertes();
     }
-
-    @GetMapping("/{id}/prix")
-    public List<IngredientDto> getPrixById(@PathVariable long id){
-        return ingredientService.getPrixById(id);
-    }
-
+ 
     @GetMapping("/{id}/recommandation")
-    public RecommandationsDto getRecommandationById(@PathVariable long id){
-        return ingredientService.getRecommandationsById(id);
+    public RecommandationsDto getRecommandation(@PathVariable Long id) {
+        Map<String, Object> ing = ingredientDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ingrédient", id));
+ 
+        Map<String, Object> meilleur = ingredientDao.findMeilleurFournisseur(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Aucun fournisseur référencé pour l'ingrédient", id));
+ 
+        double stock = (double) ing.get("stockActuel");
+        double seuil = (double) ing.get("seuilAlerte");
+ 
+        // seuil > stock → 2×(seuil−stock) ; sinon → seuil
+        int quantiteRecommandee = (seuil > stock)
+                ? (int) (2 * (seuil - stock))
+                : (int) seuil;
+ 
+        RecommandationsDto dto = new RecommandationsDto();
+        dto.setIngredientId(id);
+        dto.setIngredientNom((String) ing.get("nom"));
+        dto.setUnite((String) ing.get("unite"));
+        dto.setStockActuel((int) stock);
+        dto.setSeuilAlerte((int) seuil);
+        dto.setFournisseurId((Long) meilleur.get("fournisseurId"));
+        dto.setFournisseurNom((String) meilleur.get("fournisseurNom"));
+        dto.setPrixUnitaire(((Number) meilleur.get("prixUnitaire")).doubleValue());
+        dto.setQuantiteRecommandee(quantiteRecommandee);
+        return dto;
+    }
+ 
+    @GetMapping("/{id}/prix")
+    public List<Map<String, Object>> getPrix(@PathVariable Long id) {
+        ingredientDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ingrédient", id));
+        return ingredientDao.findPrixParFournisseur(id);
     }
 
 

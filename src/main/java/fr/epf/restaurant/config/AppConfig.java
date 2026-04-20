@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ComponentScan(basePackages = {"fr.epf.restaurant.dao", "fr.epf.restaurant.service"})
+@ComponentScan(basePackages = {"fr.epf.restaurant.dao", "fr.epf.restaurant.service", "fr.epf.restaurant.exception"})
 @Import(DatabaseConfig.class)
 public class AppConfig {
 }

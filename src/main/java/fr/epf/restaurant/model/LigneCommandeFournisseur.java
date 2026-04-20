@@ -1,14 +1,14 @@
 package fr.epf.restaurant.model;
 
 public class LigneCommandeFournisseur {
-    private long id;
-    private long CommandeFournisseurId;
-    private long ingrediantId;
+    private Long id;
+    private Long CommandeFournisseurId;
+    private Long ingrediantId;
     private double quantiteCommandee;
     private double prixUnitaire;
     public LigneCommandeFournisseur() {
     }
-    public LigneCommandeFournisseur(long id, long commandeFournisseurId, long ingrediantId, double quantiteCommandee,
+    public LigneCommandeFournisseur(Long id, Long commandeFournisseurId, Long ingrediantId, double quantiteCommandee,
             double prixUnitaire) {
         this.id = id;
         CommandeFournisseurId = commandeFournisseurId;
@@ -16,22 +16,22 @@ public class LigneCommandeFournisseur {
         this.quantiteCommandee = quantiteCommandee;
         this.prixUnitaire = prixUnitaire;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public long getCommandeFournisseurId() {
+    public Long getCommandeFournisseurId() {
         return CommandeFournisseurId;
     }
-    public void setCommandeFournisseurId(long commandeFournisseurId) {
+    public void setCommandeFournisseurId(Long commandeFournisseurId) {
         CommandeFournisseurId = commandeFournisseurId;
     }
-    public long getIngrediantId() {
+    public Long getIngrediantId() {
         return ingrediantId;
     }
-    public void setIngrediantId(long ingrediantId) {
+    public void setIngrediantId(Long ingrediantId) {
         this.ingrediantId = ingrediantId;
     }
     public double getQuantiteCommandee() {
@@ -46,6 +46,7 @@ public class LigneCommandeFournisseur {
     public void setPrixUnitaire(double prixUnitaire) {
         this.prixUnitaire = prixUnitaire;
     }
+    
 
     
 
