@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
- 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,10 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
- 
+
 @Repository
 public class PlatDao {
- 
+
     private static final String BASE_SQL =
             "SELECT p.id AS platId, p.nom AS platNom, p.description AS platDescription,"
             + " p.prix AS platPrix, pi.ingredient_id AS ingredientId,"
@@ -25,23 +25,23 @@ public class PlatDao {
             + " FROM PLAT p"
             + " LEFT JOIN PLAT_INGREDIENT pi ON p.id = pi.plat_id"
             + " LEFT JOIN INGREDIENT i ON pi.ingredient_id = i.id";
- 
+
     private final JdbcTemplate jdbc;
- 
+
     public PlatDao(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
- 
+
     public List<Map<String, Object>> findAll() {
         return aggregate(jdbc.query(BASE_SQL + " ORDER BY p.id", (rs, i) -> toRow(rs)));
     }
- 
+
     public Optional<Map<String, Object>> findById(Long id) {
         List<Map<String, Object>> plats = aggregate(
                 jdbc.query(BASE_SQL + " WHERE p.id = ?", (rs, i) -> toRow(rs), id));
         return plats.isEmpty() ? Optional.empty() : Optional.of(plats.get(0));
     }
- 
+
     public Map<String, Object> create(String nom, String description, double prix) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -55,14 +55,14 @@ public class PlatDao {
         }, keyHolder);
         return findById(keyHolder.getKey().longValue()).orElseThrow();
     }
- 
+
     public void addIngredient(Long platId, Long ingredientId, double quantite) {
         jdbc.update(
                 "INSERT INTO PLAT_INGREDIENT (plat_id, ingredient_id, quantite_requise)"
                 + " VALUES (?, ?, ?)",
                 platId, ingredientId, quantite);
     }
- 
+
     private Map<String, Object> toRow(ResultSet rs) throws SQLException {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("platId", rs.getLong("platId"));
@@ -76,7 +76,7 @@ public class PlatDao {
         row.put("quantiteRequise", rs.getDouble("quantiteRequise"));
         return row;
     }
- 
+
     private List<Map<String, Object>> aggregate(List<Map<String, Object>> rows) {
         Map<Long, Map<String, Object>> byId = new LinkedHashMap<>();
         for (Map<String, Object> row : rows) {

@@ -7,18 +7,18 @@ import fr.epf.restaurant.dto.CreerCommandeFournisseurRequest;
 import fr.epf.restaurant.exception.ResourceNotFoundException;
 import fr.epf.restaurant.exception.StatutInvalideException;
 import org.springframework.stereotype.Service;
- 
+
 import java.util.List;
 import java.util.Map;
- 
+
 @Service
 public class CommandeFournisseurService {
- 
+
     private final CommandeFournisseurDao commandeFournisseurDao;
     private final FournisseurDao fournisseurDao;
     private final IngredientDao ingredientDao;
     private final StockService stockService;
- 
+
     public CommandeFournisseurService(CommandeFournisseurDao commandeFournisseurDao,
             FournisseurDao fournisseurDao, IngredientDao ingredientDao,
             StockService stockService) {
@@ -27,16 +27,16 @@ public class CommandeFournisseurService {
         this.ingredientDao = ingredientDao;
         this.stockService = stockService;
     }
- 
+
     public List<Map<String, Object>> findAll() {
         return commandeFournisseurDao.findAll();
     }
- 
+
     public Map<String, Object> findById(Long id) {
         return commandeFournisseurDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande fournisseur", id));
     }
- 
+
     public Map<String, Object> creer(CreerCommandeFournisseurRequest request) {
         fournisseurDao.findById(request.getFournisseurId())
                 .orElseThrow(
@@ -52,7 +52,7 @@ public class CommandeFournisseurService {
         }
         return commandeFournisseurDao.findById(commandeId).orElseThrow();
     }
- 
+
     public Map<String, Object> envoyer(Long id) {
         Map<String, Object> commande = findById(id);
         String statut = (String) commande.get("statut");
@@ -62,7 +62,7 @@ public class CommandeFournisseurService {
         commandeFournisseurDao.updateStatut(id, "ENVOYEE");
         return commandeFournisseurDao.findById(id).orElseThrow();
     }
- 
+
     public Map<String, Object> recevoir(Long id) {
         Map<String, Object> commande = findById(id);
         String statut = (String) commande.get("statut");
@@ -77,16 +77,16 @@ public class CommandeFournisseurService {
         commandeFournisseurDao.updateStatut(id, "RECUE");
         return commandeFournisseurDao.findById(id).orElseThrow();
     }
- 
+
     public void supprimer(Long id) {
         findById(id);
         commandeFournisseurDao.delete(id);
     }
- 
+
     private static Long toLong(Object o) {
         return o == null ? null : ((Number) o).longValue();
     }
- 
+
     private static double toDouble(Object o) {
         return o == null ? 0.0 : ((Number) o).doubleValue();
     }

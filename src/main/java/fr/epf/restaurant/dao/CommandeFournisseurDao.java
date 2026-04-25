@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
- 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,10 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
- 
+
 @Repository
 public class CommandeFournisseurDao {
- 
+
     private static final String BASE_SQL =
             "SELECT cf.id AS commandeId, cf.statut AS statut,"
             + " cf.date_commande AS dateCommande,"
@@ -32,23 +32,23 @@ public class CommandeFournisseurDao {
             + " JOIN FOURNISSEUR f ON cf.fournisseur_id = f.id"
             + " LEFT JOIN LIGNE_COMMANDE_FOURNISSEUR lcf ON cf.id = lcf.commande_fournisseur_id"
             + " LEFT JOIN INGREDIENT i ON lcf.ingredient_id = i.id ";
- 
+
     private final JdbcTemplate jdbc;
- 
+
     public CommandeFournisseurDao(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
- 
+
     public List<Map<String, Object>> findAll() {
         return aggregate(jdbc.query(BASE_SQL + "ORDER BY cf.id", (rs, i) -> toRow(rs)));
     }
- 
+
     public Optional<Map<String, Object>> findById(Long id) {
         List<Map<String, Object>> list = aggregate(
                 jdbc.query(BASE_SQL + "WHERE cf.id = ?", (rs, i) -> toRow(rs), id));
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
- 
+
     public List<Map<String, Object>> findLignes(Long commandeId) {
         String sql = "SELECT ingredient_id AS ingredientId, quantite_commandee AS quantite"
                 + " FROM LIGNE_COMMANDE_FOURNISSEUR WHERE commande_fournisseur_id = ?";
@@ -59,7 +59,7 @@ public class CommandeFournisseurDao {
             return m;
         }, commandeId);
     }
- 
+
     public Map<String, Object> create(Long fournisseurId) {
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -73,7 +73,7 @@ public class CommandeFournisseurDao {
         }, kh);
         return findById(kh.getKey().longValue()).orElseThrow();
     }
- 
+
     public void addLigne(Long commandeId, Long ingredientId, double quantite, double prixUnitaire) {
         jdbc.update(
                 "INSERT INTO LIGNE_COMMANDE_FOURNISSEUR"
@@ -81,16 +81,16 @@ public class CommandeFournisseurDao {
                 + " VALUES (?, ?, ?, ?)",
                 commandeId, ingredientId, quantite, prixUnitaire);
     }
- 
+
     public void updateStatut(Long id, String statut) {
         jdbc.update("UPDATE COMMANDE_FOURNISSEUR SET statut = ? WHERE id = ?", statut, id);
     }
- 
+
     public void delete(Long id) {
         jdbc.update("DELETE FROM LIGNE_COMMANDE_FOURNISSEUR WHERE commande_fournisseur_id = ?", id);
         jdbc.update("DELETE FROM COMMANDE_FOURNISSEUR WHERE id = ?", id);
     }
- 
+
     private Map<String, Object> toRow(ResultSet rs) throws SQLException {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("commandeId", rs.getLong("commandeId"));
@@ -110,7 +110,7 @@ public class CommandeFournisseurDao {
         row.put("ingredientUnite", rs.getString("ingredientUnite"));
         return row;
     }
- 
+
     private List<Map<String, Object>> aggregate(List<Map<String, Object>> rows) {
         Map<Long, Map<String, Object>> byId = new LinkedHashMap<>();
         for (Map<String, Object> row : rows) {

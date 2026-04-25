@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
- 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,40 +12,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
- 
+
 @Repository
 public class IngredientDao {
- 
+
     private final JdbcTemplate jdbc;
- 
+
     public IngredientDao(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
- 
+
     public List<Map<String, Object>> findAll() {
         return jdbc.query(
                 "SELECT id, nom, unite, stock_actuel, seuil_alerte FROM INGREDIENT ORDER BY id",
                 (rs, i) -> toMap(rs));
     }
- 
+
     public Optional<Map<String, Object>> findById(Long id) {
         List<Map<String, Object>> rows = jdbc.query(
                 "SELECT id, nom, unite, stock_actuel, seuil_alerte FROM INGREDIENT WHERE id = ?",
                 (rs, i) -> toMap(rs), id);
         return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
     }
- 
+
     public List<Map<String, Object>> findSousAlerte() {
         return jdbc.query(
                 "SELECT id, nom, unite, stock_actuel, seuil_alerte"
                 + " FROM INGREDIENT WHERE stock_actuel < seuil_alerte ORDER BY id",
                 (rs, i) -> toMap(rs));
     }
- 
+
     public void updateStock(Long id, double newStock) {
         jdbc.update("UPDATE INGREDIENT SET stock_actuel = ? WHERE id = ?", newStock, id);
     }
- 
+
     public Map<String, Object> create(String nom, String unite, double stockActuel, double seuilAlerte) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -60,7 +60,7 @@ public class IngredientDao {
         }, keyHolder);
         return findById(keyHolder.getKey().longValue()).orElseThrow();
     }
- 
+
     public List<Map<String, Object>> findPrixParFournisseur(Long ingredientId) {
         String sql = "SELECT fi.fournisseur_id AS fournisseurId,"
                 + " f.nom AS fournisseurNom,"
@@ -77,12 +77,12 @@ public class IngredientDao {
             return m;
         }, ingredientId);
     }
- 
+
     public Optional<Map<String, Object>> findMeilleurFournisseur(Long ingredientId) {
         List<Map<String, Object>> prix = findPrixParFournisseur(ingredientId);
         return prix.isEmpty() ? Optional.empty() : Optional.of(prix.get(0));
     }
- 
+
     private Map<String, Object> toMap(ResultSet rs) throws SQLException {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("id", rs.getLong("id"));
@@ -93,7 +93,7 @@ public class IngredientDao {
         return m;
     }
 }
-        
-    
+
+
 
 

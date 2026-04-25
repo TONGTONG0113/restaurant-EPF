@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
- 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,29 +12,29 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
- 
+
 @Repository
 public class ClientDao {
- 
+
     private final JdbcTemplate jdbc;
- 
+
     public ClientDao(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
- 
+
     public List<Map<String, Object>> findAll() {
         return jdbc.query(
                 "SELECT id, nom, prenom, email, telephone FROM CLIENT ORDER BY id",
                 (rs, i) -> toMap(rs));
     }
- 
+
     public Optional<Map<String, Object>> findById(Long id) {
         List<Map<String, Object>> rows = jdbc.query(
                 "SELECT id, nom, prenom, email, telephone FROM CLIENT WHERE id = ?",
                 (rs, i) -> toMap(rs), id);
         return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
     }
- 
+
     public Map<String, Object> create(String nom, String prenom, String email, String telephone) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -49,7 +49,7 @@ public class ClientDao {
         }, keyHolder);
         return findById(keyHolder.getKey().longValue()).orElseThrow();
     }
- 
+
     private Map<String, Object> toMap(ResultSet rs) throws SQLException {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("id", rs.getLong("id"));

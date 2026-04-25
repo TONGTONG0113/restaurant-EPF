@@ -18,25 +18,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
- 
+
     @ResponseBody
     @ExceptionHandler(StockInsuffisantException.class)
     public ResponseEntity<Map<String, Object>> handleStock(StockInsuffisantException ex) {
         return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
- 
+
     @ResponseBody
     @ExceptionHandler(StatutInvalideException.class)
     public ResponseEntity<Map<String, Object>> handleStatut(StatutInvalideException ex) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
- 
+
     @ResponseBody
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegal(IllegalArgumentException ex) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
- 
+
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex) {
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR,
                 ex.getClass().getSimpleName() + ": " + ex.getMessage());
     }
- 
+
     private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());

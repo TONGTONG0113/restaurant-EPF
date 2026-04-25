@@ -11,20 +11,20 @@ import fr.epf.restaurant.exception.ResourceNotFoundException;
 import fr.epf.restaurant.exception.StatutInvalideException;
 import fr.epf.restaurant.exception.StockInsuffisantException;
 import org.springframework.stereotype.Service;
- 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
- 
+
 @Service
 public class CommandeClientService {
- 
+
     private final CommandeClientDao commandeClientDao;
     private final ClientDao clientDao;
     private final PlatDao platDao;
     private final IngredientDao ingredientDao;
     private final StockService stockService;
- 
+
     public CommandeClientService(CommandeClientDao commandeClientDao,
             ClientDao clientDao, PlatDao platDao,
             IngredientDao ingredientDao, StockService stockService) {
@@ -34,16 +34,16 @@ public class CommandeClientService {
         this.ingredientDao = ingredientDao;
         this.stockService = stockService;
     }
- 
+
     public List<Map<String, Object>> findAll(String statut) {
         return commandeClientDao.findAll(statut);
     }
- 
+
     public Map<String, Object> findById(Long id) {
         return commandeClientDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande client", id));
     }
- 
+
     public Map<String, Object> creer(CreerCommandeClientRequest request) {
         if (request.getClientId() == null) {
             throw new IllegalArgumentException("clientId est obligatoire");
@@ -64,7 +64,7 @@ public class CommandeClientService {
         }
         return commandeClientDao.findById(commandeId).orElseThrow();
     }
- 
+
     public PreparationResultDto passerEnPreparation(Long id) {
         Map<String, Object> commande = findById(id);
         String statut = (String) commande.get("statut");
@@ -96,7 +96,7 @@ public class CommandeClientService {
         List<AlerteStockDto> alertes = stockService.getAlertes();
         return new PreparationResultDto(maj, alertes);
     }
- 
+
     public Map<String, Object> marquerServie(Long id) {
         Map<String, Object> commande = findById(id);
         String statut = (String) commande.get("statut");
@@ -106,20 +106,20 @@ public class CommandeClientService {
         commandeClientDao.updateStatut(id, "SERVIE");
         return commandeClientDao.findById(id).orElseThrow();
     }
- 
+
     public void supprimer(Long id) {
         findById(id);
         commandeClientDao.delete(id);
     }
- 
+
     private static Long toLong(Object o) {
         return o == null ? null : ((Number) o).longValue();
     }
- 
+
     private static int toInt(Object o) {
         return o == null ? 0 : ((Number) o).intValue();
     }
- 
+
     private static double toDouble(Object o) {
         return o == null ? 0.0 : ((Number) o).doubleValue();
     }
