@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +35,10 @@ public class IngredientDao {
         return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
     }
  
-    /** stock_actuel < seuil_alerte (strictement inférieur) */
     public List<Map<String, Object>> findSousAlerte() {
         return jdbc.query(
-                "SELECT id, nom, unite, stock_actuel, seuil_alerte FROM INGREDIENT WHERE stock_actuel < seuil_alerte ORDER BY id",
+                "SELECT id, nom, unite, stock_actuel, seuil_alerte"
+                + " FROM INGREDIENT WHERE stock_actuel < seuil_alerte ORDER BY id",
                 (rs, i) -> toMap(rs));
     }
  
@@ -48,7 +47,7 @@ public class IngredientDao {
     }
  
     public Map<String, Object> create(String nom, String unite, double stockActuel, double seuilAlerte) {
-        KeyHolder kh = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
                     "INSERT INTO INGREDIENT (nom, unite, stock_actuel, seuil_alerte) VALUES (?, ?, ?, ?)",
@@ -58,25 +57,23 @@ public class IngredientDao {
             ps.setDouble(3, stockActuel);
             ps.setDouble(4, seuilAlerte);
             return ps;
-        }, kh);
-        return findById(kh.getKey().longValue()).orElseThrow();
+        }, keyHolder);
+        return findById(keyHolder.getKey().longValue()).orElseThrow();
     }
  
     public List<Map<String, Object>> findPrixParFournisseur(Long ingredientId) {
-        String sql = """
-                SELECT fi.fournisseur_id AS fournisseurId,
-                       f.nom             AS fournisseurNom,
-                       fi.prix_unitaire  AS prixUnitaire
-                FROM FOURNISSEUR_INGREDIENT fi
-                JOIN FOURNISSEUR f ON fi.fournisseur_id = f.id
-                WHERE fi.ingredient_id = ?
-                ORDER BY fi.prix_unitaire ASC
-                """;
+        String sql = "SELECT fi.fournisseur_id AS fournisseurId,"
+                + " f.nom AS fournisseurNom,"
+                + " fi.prix_unitaire AS prixUnitaire"
+                + " FROM FOURNISSEUR_INGREDIENT fi"
+                + " JOIN FOURNISSEUR f ON fi.fournisseur_id = f.id"
+                + " WHERE fi.ingredient_id = ?"
+                + " ORDER BY fi.prix_unitaire ASC";
         return jdbc.query(sql, (rs, i) -> {
             Map<String, Object> m = new LinkedHashMap<>();
-            m.put("fournisseurId",  rs.getLong("fournisseurId"));
+            m.put("fournisseurId", rs.getLong("fournisseurId"));
             m.put("fournisseurNom", rs.getString("fournisseurNom"));
-            m.put("prixUnitaire",   rs.getDouble("prixUnitaire"));
+            m.put("prixUnitaire", rs.getDouble("prixUnitaire"));
             return m;
         }, ingredientId);
     }
@@ -88,14 +85,13 @@ public class IngredientDao {
  
     private Map<String, Object> toMap(ResultSet rs) throws SQLException {
         Map<String, Object> m = new LinkedHashMap<>();
-        m.put("id",          rs.getLong("id"));
-        m.put("nom",         rs.getString("nom"));
-        m.put("unite",       rs.getString("unite"));
-        m.put("stockActuel", rs.getDouble("stock_actuel"));   // DOUBLE dans le schéma
-        m.put("seuilAlerte", rs.getDouble("seuil_alerte"));   // DOUBLE dans le schéma
+        m.put("id", rs.getLong("id"));
+        m.put("nom", rs.getString("nom"));
+        m.put("unite", rs.getString("unite"));
+        m.put("stockActuel", rs.getDouble("stock_actuel"));
+        m.put("seuilAlerte", rs.getDouble("seuil_alerte"));
         return m;
     }
-    
 }
         
     

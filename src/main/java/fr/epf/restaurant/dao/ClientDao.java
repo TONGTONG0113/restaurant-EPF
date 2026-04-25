@@ -1,5 +1,10 @@
 package fr.epf.restaurant.dao;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+ 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,15 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
-
-
+ 
 @Repository
 public class ClientDao {
+ 
     private final JdbcTemplate jdbc;
  
     public ClientDao(JdbcTemplate jdbc) {
@@ -50,7 +50,6 @@ public class ClientDao {
         return findById(keyHolder.getKey().longValue()).orElseThrow();
     }
  
-    /** RowMapper explicite : garantit des clés en minuscules quelle que soit la BDD */
     private Map<String, Object> toMap(ResultSet rs) throws SQLException {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("id", rs.getLong("id"));
@@ -60,7 +59,4 @@ public class ClientDao {
         m.put("telephone", rs.getString("telephone"));
         return m;
     }
-
-    
-
 }
