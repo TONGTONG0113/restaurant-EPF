@@ -8,37 +8,44 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-   @ExceptionHandler(ResourceNotFoundException.class)
+
+    @ResponseBody
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
  
+    @ResponseBody
     @ExceptionHandler(StockInsuffisantException.class)
     public ResponseEntity<Map<String, Object>> handleStock(StockInsuffisantException ex) {
-        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
  
+    @ResponseBody
     @ExceptionHandler(StatutInvalideException.class)
     public ResponseEntity<Map<String, Object>> handleStatut(StatutInvalideException ex) {
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
  
+    @ResponseBody
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegal(IllegalArgumentException ex) {
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
  
+    @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex) {
         ex.printStackTrace();
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+        return build(HttpStatus.INTERNAL_SERVER_ERROR,
                 ex.getClass().getSimpleName() + ": " + ex.getMessage());
     }
  
-    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
+    private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", status.value());
