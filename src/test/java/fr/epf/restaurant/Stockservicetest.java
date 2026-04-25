@@ -19,7 +19,6 @@ import fr.epf.restaurant.service.StockService;
 
 
 public class Stockservicetest {
-    // Mock manuel sans Mockito
     private Map<String, Object> ing(Long id, String nom, double stock, double seuil) {
         return Map.of("id", id, "nom", nom, "unite", "g",
                 "stockActuel", stock, "seuilAlerte", seuil);

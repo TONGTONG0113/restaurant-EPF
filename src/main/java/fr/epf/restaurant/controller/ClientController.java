@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 import java.util.Map;
 
@@ -34,4 +33,5 @@ public class ClientController {
         String telephone = (String) body.getOrDefault("telephone", "");
         return ResponseEntity.status(201).body(clientDao.create(nom, prenom, email, telephone));
     }
+
 }

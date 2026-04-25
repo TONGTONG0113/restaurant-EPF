@@ -57,7 +57,6 @@ public class Commandeclientservicetest {
         return new CommandeClientService(commandeDao, clientDao, platDao, ingredientDao, stockService);
     }
  
-    // ─── creer ───────────────────────────────────────────────────────────────
  
     @Test
     @DisplayName("creer : client inexistant → ResourceNotFoundException")
@@ -96,8 +95,7 @@ public class Commandeclientservicetest {
         assertThrows(ResourceNotFoundException.class,
                 () -> service.creer(buildRequest(1L, 888L, 1)));
     }
- 
-    // ─── passerEnPreparation ─────────────────────────────────────────────────
+
  
     @Test
     @DisplayName("preparer : stock insuffisant → StockInsuffisantException")
@@ -139,7 +137,6 @@ public class Commandeclientservicetest {
                 () -> service.passerEnPreparation(3L));
     }
  
-    // ─── marquerServie ────────────────────────────────────────────────────────
  
     @Test
     @DisplayName("servir : statut EN_ATTENTE → StatutInvalideException")
