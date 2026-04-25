@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.epf.restaurant.dto.CreerCommandeFournisseurRequest;
-import fr.epf.restaurant.model.CommandeFournisseur;
+
 import fr.epf.restaurant.service.CommandeFournisseurService;
 @RestController
 @RequestMapping("/api/commandes/fournisseur")

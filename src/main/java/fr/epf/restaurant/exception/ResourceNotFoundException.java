@@ -1,6 +1,6 @@
 package fr.epf.restaurant.exception;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 public class ResourceNotFoundException extends RuntimeException{
 

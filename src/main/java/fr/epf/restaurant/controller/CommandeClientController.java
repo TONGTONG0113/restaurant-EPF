@@ -44,7 +44,7 @@ public class CommandeClientController {
  
         CreerCommandeClientRequest request = new CreerCommandeClientRequest();
  
-        // clientId : supporte "clientId", "client_id", ou objet "client"
+        
         if (body.containsKey("clientId") && body.get("clientId") != null) {
             request.setClientId(((Number) body.get("clientId")).longValue());
         } else if (body.containsKey("client_id") && body.get("client_id") != null) {
@@ -57,7 +57,6 @@ public class CommandeClientController {
             return ResponseEntity.badRequest().body(Map.of("error", "clientId manquant dans le body: " + body));
         }
  
-        // lignes
         List<CreerCommandeClientRequest.LigneCommande> lignes = List.of();
         if (body.containsKey("lignes") && body.get("lignes") != null) {
             @SuppressWarnings("unchecked")
